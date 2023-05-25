@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+  <mapper namespace="userDao">
+  <!-- SQL 문장을 관리하는 파일 
+  	- namespace : 맵퍼파일끼리 구분하는 이름, 다른 Mapper 파일과 이름 중복안됨
+  	- <select> <insert> <update> <delete> 등 쿼리문에 대한 태그가 존재
+  	- 태그들에게 id를 부여하여 외부에서 호출할때 "맵퍼이름.id" 로 탐색
+  -->
+  
+  <!-- 
+  	parameterType =""     : 쿼리 문장을 실행할때 외부로부터 받은 필요한 데이터
+  	resultType =""        : 쿼리 문장을 실행할때 출력되는 결과 데이터
+  
+   -->
+  
+<!--   	<select id="getTime" resultType="String"> -->
+<!--   		select sysdate from dual -->
+<!--   	</select> -->
+  	
+  	<select id="userLogin" parameterType="user" resultType="user">
+  		SELECT * FROM users WHERE userid = #{userid} 
+  		AND password= #{password}
+<!--   		<if test="password != null"> -->
+<!--   		</if> -->
+  	</select>
+  	
+  	<select id="idCheck" parameterType="user" resultType="user">
+  		SELECT * FROM users WHERE userid = #{userid} 
+  	</select>
+  	
+  	<insert id="userInsert" parameterType="user">
+  		INSERT INTO users 
+  		VALUES ( seq_userId.nextval,#{userid}, #{password}, #{username}, #{usergender})
+
+  	</insert>
+
+	<select id="getBookList" parameterType="user" resultType="user">
+		select * from books 
+		<where>
+		<if test="bookSearch!=null">
+			${topSelect} like '%${bookSearch}%'
+		</if>
+
+		</where>		
+		order by bookid 
+		
+		<!-- where 조건이 한개 이상일때 위에 처럼 <where>를 이용해서 고쳐준다 -->
+<!-- 		<if test="booktitle != null"> -->
+<!-- 			where booktitle = #{booktitle} -->
+<!-- 		</if> -->
+<!-- 		<if test="bookauthor != null"> -->
+<!-- 			where bookauthor = #{bookauthor} -->
+<!-- 		</if> -->
+	
+	</select >
+		
+	<update id="userUpdate" parameterType="user">
+	
+	update users set password = #{newpass} where password= #{password}
+	</update>
+	
+	
+	
+	
+	
+	<insert id="userReservation" parameterType="user">
+  		INSERT INTO bookinginfo
+  		VALUES (#{bookid}, #{bookingName}, #{bookingTel}, 
+  		#{rentalDue},#{rentalPeriod},#{booktitle},#{bookauthor})
+	
+
+  	</insert>
+  	
+  		
+	<update id="bookingUpdate" parameterType="user">
+	
+	update books set bookstatement = 'N', rentalDue = #{rentalDue} where bookid = #{bookid} 
+	
+	</update>
+
+	<select id="getAllList" resultType="user">
+  		SELECT * FROM books order by bookid
+  	</select>
+  	
+  	<update id="changeInfo" parameterType="user">
+	
+	update books set bookstatement = 'Y', rentalDue = '' where bookid= #{bookid}
+	
+	</update>
+	
+  	<delete id="bookingDelete" parameterType="user">
+  	delete from bookinginfo where bookingid = #{bookid}
+  	
+  	</delete>
+  	
+  	
+  	
+  	
+  	
+  </mapper>
+  	
+  	
+  	
+  	
+  	

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+  <mapper namespace="boardDAO">
+                              
+  	<select id="getBoardList" resultType="board"> <!-- board라는 형태로 전달해쥬 -->
+  	
+  		SELECT * FROM board ORDER BY seq DESC
+  	
+  	</select>
+  	                          
+  	<insert id="insertBoard" parameterType="board"> 
+  	<!-- parameter board는 mybatis-config에서 쓰는 board라는 애를 받아온다 
+  								이 board는 BoardVO를 가져온 값-->
+  		INSERT INTO BOARD (seq, title, writer, content, regdate, cnt)
+  		VALUES (board_seq.nextval, #{title}, #{writer}, #{content}, sysdate, 0)
+  	
+  	</insert>
+  	            <!-- BoardDAO 에서 vo로 받아온값              다시 업데이트 된걸 BoardDAO한테 준다     -->
+  	<select id="getBoard" parameterType="board" resultType="board">
+  		<!-- 조회문 -->
+  		
+  		SELECT * FROM board WHERE seq = #{seq}
+  	</select>
+  	
+  	<delete id="deleteBoard" parameterType="board">
+  	
+  	delete from board where seq = #{seq}
+  	
+  	
+  	</delete>
+  	
+  </mapper>

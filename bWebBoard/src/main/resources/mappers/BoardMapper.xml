@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+  <mapper namespace="boardDAO">
+  	<!-- Mapper에서 변수를 호출하는 방법 : #{} / ${} 
+  		#{} : 데이터의 자료형(숫자,문자)에 따라서 알아서 자료형을 매칭 > 문자 '' 생성 / 숫자면 무시
+  		${} : 데이터의 자료형과 무관하게 아무 기능 없음 (이전방식) >> 보안이슈때문에 사용을 자제함
+  	-->                       
+             
+                              
+  	<select id="getBoardList" parameterType="hashmap" resultType="board"> <!-- board라는 형태로 전달해쥬 -->
+  	
+  		SELECT * 
+  		FROM board 
+<!--   		WHERE title like '%검색어%'  -->
+<!--   		WHERE content like '%검색어%'  -->
+<!--   		WHERE writer like '%검색어%'  -->
+		<where> <!-- 있으면 없으면을 둘다 말하고 싶으면 where태그를 쓰고 -->
+			<if test="searchKeyword != null"> <!-- 알아서 hashmap에서 searchKeyword 값을 가져옴 -->
+<!-- 				title LIKE    '%%' -->
+<!-- 				content LIKE  '%%' -->
+<!-- 				write LIKE    '%%' -->
+				<!-- getBoardList.jsp에 이미 위에 세개를 searchCondition에 지정해놔서 얘만 불러오면
+				 세개가 온다 -->
+				
+				${searchCondition} LIKE   '%${searchKeyword}%'
+				<!-- #을 이용하면 검색에 옆에 ''가 붙을 단어가 검색이된다
+					where title like '&&' 이문장이라면
+					where 'title' like 로 title을 문자로 보고 싱글쿼터를 만들어버린다
+				 -->
+				  
+			</if>
+		</where>
+  		ORDER BY seq DESC
+  	
+  	</select>
+  	
+		<!-- 태그가 아닌 WHERE 어쩌구로 바로 쓰려면 WHERE 옆에 무조건 참인 조건을 달아주고 if문 씀 
+		<select id="getBoardList" parameterType="hashmap" resultType="board">
+      	SELECT *
+        	FROM board 
+      			WHERE 1=1 
+         		<if test="searchKeyword != null"> 
+           		AND ${searchCondition} LIKE   '%${searchKeyword}%' 
+        		</if>  
+       ORDER BY seq DESC 
+    </select>
+		-->
+        
+      		
+  	                          
+  	<insert id="insertBoard" parameterType="board"> 
+  	<!-- parameter board는 mybatis-config에서 쓰는 board라는 애를 받아온다 
+  								이 board는 BoardVO를 가져온 값-->
+  		INSERT INTO BOARD (seq, title, writer, content, regdate, cnt)
+  		VALUES (board_seq.nextval, #{title}, #{writer}, #{content}, sysdate, 0)
+  	
+  	</insert>
+  	            <!-- BoardDAO 에서 vo로 받아온값              다시 업데이트 된걸 BoardDAO한테 준다     -->
+  	<select id="getBoard" parameterType="board" resultType="board">
+  		<!-- 조회문 -->
+  		
+  		SELECT * FROM board WHERE seq = #{seq}
+  	</select>
+  	
+  	<delete id="deleteBoard" parameterType="board">
+  	
+  	delete from board where seq = #{seq}
+  	
+  	
+  	</delete>
+  	
+  	<update id="updateBoard" parameterType="board">
+  	
+   	UPDATE board SET content = #{content} where seq = #{sep}
+  	
+  	</update>
+  	
+  </mapper>

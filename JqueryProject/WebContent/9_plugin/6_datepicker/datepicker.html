@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8" />
+<title>Datepicker</title>
+<link rel="stylesheet" type="text/css"
+  href="http://code.jquery.com/ui/1.10.0/themes/ui-lightness/jquery-ui.css" />
+<script type="text/javascript"
+  src="http://code.jquery.com/jquery-1.9.0.js"></script>
+<script type="text/javascript"
+  src="http://code.jquery.com/ui/1.10.0/jquery-ui.js"></script>
+<script type="text/javascript"
+  src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.0/i18n/jquery-ui-i18n.min.js"></script>
+<script type="text/javascript">
+
+$(function () {
+	// 달력의 언어 설정
+   $.datepicker.setDefaults($.datepicker.regional['ko']);
+   $('#datepicker').datepicker({
+          // 달력화면이 열릴 때의 애니메이션 옵션
+      showAnim : 'slideDown',               
+      // 버튼을 눌렀을 때 달력화면이 나오도록
+           showOn : 'button',                  
+      // 버튼에 들어갈 이미지
+           buttonImage : 'images/calendar.gif',   
+      // 이미지만 나오고 버튼 형태는 사라지도록
+           buttonImageOnly : true               
+   });
+   
+   $('#datepicker').click( function () {
+	alert( $('#datepicker').val() );
+});
+   
+   
+   
+   
+});
+
+</script>
+
+</head>
+<body>
+<label for="date">날짜:</label>
+<input id="datepicker" type="text">
+</body>
+</html>

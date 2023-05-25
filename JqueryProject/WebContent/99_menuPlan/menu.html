@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>CAFE</title>
+ <link rel="stylesheet" type="text/css" href="style.css">
+   <!-- jQuery라이브러리를 임포트 -->
+  <script type="text/javascript"  src="http://code.jquery.com/jquery-1.9.0.js"></script>
+ 
+ <script type="text/javascript">
+
+ $(function() {
+	
+	 // 이벤트 정리 : "누가", "언제", "어떻게"
+	 // "누가" : select 태그 / 주문하기 버튼 / 삭제버튼
+	 // "언제" : 숫자가 바뀔때 /   클릭할때     / 클릭할때
+	 // "어떻게" : 총합 변경    /   메뉴추가    /  메뉴삭제
+	 
+	 // 1-1. 메뉴숫자가 바뀔때 >> 총합 숫자가 바꾸ㅣ어야한다
+	 // 수량 select 태그 선택할때 모든 태그를 선택하기위한 공통 분모를 찾자 : class(menuCount)를이용
+	 // click : 메뉴를 바꿀때 2번발생, 키보드에 대한 작업이 불가능 
+	 // change : select 태그가 변경될때 라는 이벤트 둘이 같이 자주 쓰임
+	 
+	 	$('.menuCount').change( function() {
+			let sum = 0;	 
+			
+			// 계산을 진행하는 부분
+			// sum = 메뉴의 수랑 * 메뉴의 가격
+			
+			for ( var i = 1; i <10; i++ ) {
+				var menuPrice = '#price'+i;       	// 메뉴 가격 선택자
+				var menuAmount = '#menu'+i+'Count'; // 메뉴 수량 선택자
+								
+				$(menuPrice).text();  // value의 값은 input에서 가져올수있음
+				$(menuAmount).val();  // select에서 value 가져올수있음
+				console.log($(menuPrice).text());
+				console.log($(menuAmount).val());
+				
+				sum += ( $(menuAmount).val() * $(menuPrice).text() );
+				console.log(sum);
+			}
+			
+						
+			// 계산을 통해 출력하는 부분
+			$('#total').val(sum);
+
+	});
+	 
+	 // 1-2. 주문하기 버튼을 누를때 >> 메뉴 추가
+	 
+	 $('#btn').click( function() {
+		// 1. 메뉴 추가
+		for ( var i = 1; i <10; i++) {
+		
+		// 1-1. 겹치는 대상이 있을때 : contains 
+		if ( $('#listTable tr:contains('+ $('#label'+i).text() +')' ).length != 0 ){
+			// 겹치는 대상이 존재 > 새로운 태그를 추가하는것이 아니라 기존 태그를 수정
+			// 수량을 수정해야한다
+			
+	    // 특정문자열을 찾는 행위
+	    console.log( $('#listTable tr:contains("에스프레소")' )); // 검색어를 가진 TR태그
+	    console.log( $('#listTable tr:contains("에스프레소") > td' )); // 검색어를 가진 안에 있는 Td태그
+	    console.log( $('#listTable tr:contains("에스프레소") > td:eq(1)' )); 
+	    // >> 검색어를 가진 tr의 안에 있는 Td태그들 중 2번째 태그 즉 1번 (0부터 시작하니까)
+	    console.log( $('#listTable tr:contains("에스프레소") > td:eq(1)' ).text() );
+	    // >> 선택한 태그 내의 문자( 기존 수량 )
+	    
+	    // 추가할 수량
+	    console.log( $('#menu'+i+'Count').val() );
+	    
+        var oNum = parseInt( $('#listTable tr:contains('+ $('#label'+i).text() +')>td:eq(1)' ).text() )
+        var aNum =  parseInt( $('#menu'+i+'Count').val() )
+        
+        // 변경할 태그 선택
+         $('#listTable tr:contains('+ $('#label'+i).text() +')>td:eq(1)' ).text( oNum + aNum ); 
+	            
+	    // innerHTML = .html();
+	    // innerText = .text();
+        
+        
+        
+	    }
+				
+		// 1-2. 겹치는 대상이 없을때
+				
+		else if ( $('#menu'+i+'Count').val() != 0 ) {
+			
+		$('#listTable').append("<tr><td>"+ $('#label'+i).text() +"</td>"
+                                 +"<td>"+$('#menu'+i+'Count').val()+"</td>"
+                                 +"<td><button class='del'>삭제</button></td></tr>");         
+         
+			}
+		// 수량 초기화
+		
+		$('#menu'+i+'Count').val(0); // select태그의 숫자가 주문하기를 누르면 0으로 바뀜
+		
+		} 
+		
+		// 2. 총합값을 초기화 , 공백만들기  // select태그의 숫자가 주문하기를 누르면 총합칸이 빈칸으로 바뀜
+		 $('#total').val('');
+		
+		
+		
+	}); // 반복문이 여기 까지
+	 
+	 
+	 // 1-3. 삭제하기 버튼을 누를때 >> 메뉴 삭제
+// 	  $('#').click( function() {
+		
+// 	});
+	 	 
+
+});
+ 
+  </script>
+ 
+ 
+</head>
+<body>
+
+
+<div id="leftdiv">
+<table class="menutbl">
+	<tr id="menutitle">
+		<th colspan=3 id="titleText">M E N U</th>
+	</tr>
+	<tr class="menus">
+		<td id='menu1' class='menu'>
+			<img src="./images/에스프레소.jpg" /> <br/>
+			<span id="label1" value = '에스프레소'>에스프레소</span>
+			<span id="price1" value = '1000'>1000</span>원
+			<br/>
+			<select name="menu1Count" id="menu1Count" class='menuCount'>
+				<option value='0'>0</option>
+				<option value='1'>1</option>
+				<option value='2'>2</option>
+				<option value='3'>3</option>
+				<option value='4'>4</option>
+				<option value='5'>5</option>
+			</select>
+		</td>
+		<td id='menu2' class='menu'>
+			<img src="./images/아메리카노.jpg" /> <br/>
+			<span id="label2" value = '아메리카노'>아메리카노</span> 
+			<span id="price2" value = '2000'>2000</span>원<br/>
+			<select name="menu2Count" id="menu2Count" class='menuCount'>
+				<option value='0'>0</option>
+				<option value='1'>1</option>
+				<option value='2'>2</option>
+				<option value='3'>3</option>
+				<option value='4'>4</option>
+				<option value='5'>5</option>
+			</select>
+		</td>
+		<td id='menu3' class='menu'>
+			<img src="./images/카페라떼.jpg" /> <br/>
+			<span id="label3" value = '카페라떼'>카페라떼</span>
+			<span id="price3" value = '3000'>3000</span>원<br/>
+			<select name="menu3Count" id="menu3Count" class='menuCount'>
+				<option value='0'>0</option>
+				<option value='1'>1</option>
+				<option value='2'>2</option>
+				<option value='3'>3</option>
+				<option value='4'>4</option>
+				<option value='5'>5</option>
+			</select>
+		</td>
+		
+	</tr>
+	<tr class="menus">
+		<td id='menu4' class='menu'>
+			<img src="./images/카푸치노.jpg" /> <br/>
+			<span id="label4" value = '카푸치노'>카푸치노</span>
+			<span id="price4" value = '2000'>2000</span>원
+			<br/>
+			<select name="menu4Count" id="menu4Count" class='menuCount'>
+				<option value='0'>0</option>
+				<option value='1'>1</option>
+				<option value='2'>2</option>
+				<option value='3'>3</option>
+				<option value='4'>4</option>
+				<option value='5'>5</option>
+			</select>
+		</td>
+		<td id='menu5' class='menu'>
+			<img src="./images/돌체라떼.jpg" /> <br/>
+			<span id="label5" value='돌체라떼'>돌체라떼</span>
+			<span id="price5" value='1000'>1000</span>원<br/>
+			<select name="menu5Count" id="menu5Count" class='menuCount'>
+				<option value='0'>0</option>
+				<option value='1'>1</option>
+				<option value='2'>2</option>
+				<option value='3'>3</option>
+				<option value='4'>4</option>
+				<option value='5'>5</option>
+			</select>
+		</td>
+		<td id='menu6' class='menu'>
+			<img src="./images/카페모카.jpg" /> <br/>
+			<span id="label6" value='카페모카'>카페모카</span>
+			<span id="price6" value='1500'>1500</span>원 <br/>
+			<select name="menu6Count" id="menu6Count" class='menuCount'>
+				<option value='0'>0</option>
+				<option value='1'>1</option>
+				<option value='2'>2</option>
+				<option value='3'>3</option>
+				<option value='4'>4</option>
+				<option value='5'>5</option>
+			</select>
+		</td>
+	</tr>
+	<tr class="menus">
+		<td id='menu7' class='menu'>
+			<img src="./images/자바칩 프라프치노.jpg" /> <br/>
+			<span id="label7" value='자바칩 프라프치노'>자바칩 프라프치노</span>
+			 <span id="price7" value='2000'>2000</span>원 <br/>
+			<select name="menu7Count" id="menu7Count" class='menuCount'>
+				<option value='0'>0</option>
+				<option value='1'>1</option>
+				<option value='2'>2</option>
+				<option value='3'>3</option>
+				<option value='4'>4</option>
+				<option value='5'>5</option>
+			</select>
+		</td>
+		<td id='menu8' class='menu'>
+			<img src="./images/차이 티.jpg" /> <br/>
+			<span id="label8" value='차이 티'>차이 티</span>
+			<span id="price8" value='1000'>1000</span>원 <br/>
+			<select name="menu8Count" id="menu8Count" class='menuCount'>
+				<option value='0'>0</option>
+				<option value='1'>1</option>
+				<option value='2'>2</option>
+				<option value='3'>3</option>
+				<option value='4'>4</option>
+				<option value='5'>5</option>
+			</select>
+		</td>
+		<td id='menu9' class='menu'>
+			<img src="./images/그린 티.jpg" /> <br/>
+			<span id="label9" value='그린 티'>그린 티 </span>
+			<span id="price9" value='1500'>1500</span>원 <br/>
+			<select name="menu9Count" id="menu9Count" class='menuCount'>
+				<option value='0'>0</option>
+				<option value='1'>1</option>
+				<option value='2'>2</option>
+				<option value='3'>3</option>
+				<option value='4'>4</option>
+				<option value='5'>5</option>
+			</select>
+		</td>
+	</tr>
+</table>
+</div>
+
+<div id="rightdiv">
+<table id="listTable">
+	<tr id="listtitle">
+		<th colspan=3 id="titleText">주문내역</th>
+	</tr>
+	<tr id="totallist">
+		<td colspan='3'>
+			총합 : <input type='text'  id='total'/> 원 
+			<input type='button'	value='주문하기'  id='btn'/>
+		</td>
+	</tr>
+	<tr id="listtr">
+		<td width="150">목록</td>
+		<td width="100">갯수</td>
+		<td width="50">삭제</td>
+	</tr>
+	
+</table>
+</div>
+
+
+<div id="test">
+
+</div>
+
+</body>
+</html>
